@@ -6,7 +6,7 @@ const { Sequelize } = require('../database/mysql/connect');
 const authenticationController = {
 
     signUp: asyncMiddleware(async (req, res) => {
-        const { username, password, email } = req.body
+        const { username, password, email, phone } = req.body
         // check username and email exist
         const isExistedUser = await User.findOne({
             where:
@@ -22,7 +22,7 @@ const authenticationController = {
 
         // create a new user
         const hashPassword = authUtils.hashPassword(password)
-        const user = await User.create({ username, password: hashPassword, email })
+        const user = await User.create({ username, password: hashPassword, email, phone })
 
         console.log('new user:', user)
         res.status(201).json({

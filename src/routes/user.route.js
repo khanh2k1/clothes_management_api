@@ -5,4 +5,7 @@ const router = express.Router()
 
 
 
-module.exports = router
+router.get('/profile', userController.getProfile)
+router.patch('/profile/:id', userController.updateProfile)
+
+module.exports = router 

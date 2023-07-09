@@ -30,7 +30,7 @@ async function connectMysql() {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');
 
-        await sequelize.sync({force: true})
+        await sequelize.sync()
         console.log('All models were synchronized successfully.');
         
     } catch (error) {
@@ -40,7 +40,7 @@ async function connectMysql() {
 connectMysql()
 
 // routes
-app.use('/api/v1/users', userRoute)
+app.use('/api/v1/user', jwtAuth, userRoute)
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/address', jwtAuth, addressRoute)
 

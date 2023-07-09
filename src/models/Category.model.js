@@ -12,12 +12,14 @@ const Category = sequelize.define('Category', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
-    }, 
+    },
     slug: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
     }
+}, {
+    freezeTableName: true
 })
 
 

@@ -12,9 +12,11 @@ const Order = sequelize.define('Order', {
         type: DataTypes.STRING,
         allowNull: false,
         primaryKey: true,
+        defaultValue: 'pending'
     },  
 }, {
-    timestamps: true
+    timestamps: true,
+    freezeTableName: true
 }) 
 
 module.exports = Order;

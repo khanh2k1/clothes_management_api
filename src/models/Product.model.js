@@ -13,7 +13,6 @@ const Product = sequelize.define('Product', {
         allowNull: false,
         unique: true,
     },
-    
     description: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,13 +25,23 @@ const Product = sequelize.define('Product', {
         allowNull: false,
     },
     amount: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     rating: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: true,
     },
+    categoryId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Category',
+            key: 'id'
+        }
+    }
+}, {
+    freezeTableName: true
 })
 
 module.exports = Product;

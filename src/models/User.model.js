@@ -9,16 +9,20 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
-  }, 
+  },
   username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  phone: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   },
   avatar: {
     type: DataTypes.STRING
@@ -28,9 +32,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   }
-}, {
-  timestamps: true,
-
-});
+},
+  {
+    timestamps: true,
+    freezeTableName: true
+  });
 
 module.exports = User;

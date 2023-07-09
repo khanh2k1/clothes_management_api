@@ -29,6 +29,8 @@ const Campaign = sequelize.define('Campaign', {
         type: DataTypes.DATE,
         allowNull: false,
     }
+}, {
+    freezeTableName: true
 })
 
 module.exports = Campaign;
