@@ -13,6 +13,9 @@ const app = express()
 const RoleModel = require('./models/Role.model')
 const roles = require('./constant/Roles')
 
+// status
+const status = require('./constant/Status')
+const StatusModel = require('./models/Status.model')
 
 
 // routes
@@ -42,10 +45,12 @@ async function connectMysql() {
         console.log('Connection has been established successfully.')
         // await sequelize.sync({ alter: true })
         // await sequelize.sync({ force: false })
-        await sequelize.sync()
+        await sequelize.sync({force: true})
         console.log('All models were synchronized successfully.');
 
         await RoleModel.bulkCreate(roles, { ignoreDuplicates: true })
+        await StatusModel.bulkCreate(status, { ignoreDuplicates: true })
+
         console.log('all roles were inserted successfully.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);

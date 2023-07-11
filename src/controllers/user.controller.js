@@ -1,7 +1,7 @@
 const User = require('../models/User.model');
 const asyncMiddleware = require('../middlewares/async.middleware');
+const { ErrorResponse } = require('../responses/error.Response')
 const Address = require('../models/Address.model');
-const authUtils = require('../utils/authentication.utils');
 const userController = {
 
     getProfile: asyncMiddleware(async (req, res) => {
@@ -46,6 +46,21 @@ const userController = {
     }),
 
     delete: async (req, res) => {
+        const { id } = req.user
+        const user = await User.findOne({
+            where: { id }
+        })
+
+        if (!user) throw new ErrorResponse(404, 'User not found')
+
+        // delete user
+        const isDeletedUser = await User.destroy({ where: { id } })
+
+        if (!isDeletedUser) throw new ErrorResponse(400, 'User not deleted')
+
+        res.status(200).json({
+            success: true,
+        })
     },
 }
 

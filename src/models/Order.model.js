@@ -7,16 +7,28 @@ const Order = sequelize.define('Order', {
         autoIncrement: true,
         allowNull: false,
         primaryKey: true,
-    }, 
-    status: {
-        type: DataTypes.STRING,
+    },
+    quantity: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
-        defaultValue: 'pending'
-    },  
+        defaultValue: 1
+    },
+    cancelledReason: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    received_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    cancelled_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 }, {
     timestamps: true,
-    freezeTableName: true
-}) 
+    freezeTableName: true,
+    paranoid: true,
+})
 
 module.exports = Order;
