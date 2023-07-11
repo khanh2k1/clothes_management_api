@@ -4,14 +4,29 @@ const { ErrorResponse } = require('../responses/error.Response')
 
 const addressController = {
 
-    getAll: async (req, res) => {
+    getAll: asyncMiddleware(async (req, res) => {
+        
+        const address = await Address.findAll({
+            include: {
+                model: User,
+                attributes: ['id', 'name', 'email', 'phone']
+            }
+        })
+        res.status(200).json({
+            success: true,
+            address
+        })
+    }),
+
+    getAddressByUserId: asyncMiddleware(async (req, res) => {
         const { id: userId } = req.user
         const address = await Address.findAll({ where: { userId } })
         res.status(200).json({
             success: true,
             address
         })
-    },
+    }),
+
 
     create: asyncMiddleware(async (req, res) => {
         const { id: userId } = req.user
@@ -20,7 +35,7 @@ const addressController = {
         // check duplicate address of user
         //
         await Address.create({ city, province, address, zip, userId })
-        .then((data) => {
+            .then((data) => {
                 res.status(201).json({
                     success: true,
                 })
@@ -49,10 +64,6 @@ const addressController = {
             success: true,
         })
     }),
-
-    delete: async (req, res) => {
-
-    },
 }
 
 

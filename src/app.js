@@ -40,10 +40,12 @@ async function connectMysql() {
     try {
         await sequelize.authenticate()
         console.log('Connection has been established successfully.')
+        // await sequelize.sync({ alter: true })
+        // await sequelize.sync({ force: false })
         await sequelize.sync()
         console.log('All models were synchronized successfully.');
-        
-        await RoleModel.bulkCreate(roles, {ignoreDuplicates: true})
+
+        await RoleModel.bulkCreate(roles, { ignoreDuplicates: true })
         console.log('all roles were inserted successfully.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);

@@ -34,6 +34,7 @@ const Product = sequelize.define('Product', {
         allowNull: true,
     },
 }, {
+    paranoid: true,
     freezeTableName: true
 })
 

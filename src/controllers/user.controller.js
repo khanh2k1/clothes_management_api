@@ -18,6 +18,7 @@ const userController = {
         })
         if (!user) throw new ErrorResponse(400, 'User not found')
 
+        
         const { password, ...rest } = user.dataValues
         res.status(200).json({
             success: true,

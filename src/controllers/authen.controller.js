@@ -41,17 +41,19 @@ const authenticationController = {
 
     signIn: asyncMiddleware(async (req, res) => {
         const { username, password } = req.body
-        const user = await User.findOne({ username: username })
+        const user = await User.findOne({ where: { username } })
         if (!user) {
             throw new ErrorResponse(401, 'Unauthorized')
         }
+        console.log('==> user: ', user.dataValues)
         const isMatch = authUtils.comparePassword(password, user.password)
         if (!isMatch) {
             throw new ErrorResponse(401, 'Unauthorized')
         }
 
-        const { id, email } = user
-        const token = authUtils.generateToken(id, email)
+        const { id } = user
+        console.log('==> id: ', id, username)
+        const token = authUtils.generateToken(id, username)
 
         res.status(200).json({
             success: true,

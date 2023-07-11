@@ -8,6 +8,8 @@ const authorize = require('../middlewares/authorize.middleware')
 
 router.get('/:id', productController.getProductById)
 
+router.get('/', productController.getAll)
+
 router.post('/',
     jwtAuth,
     authorize('owner'),
@@ -24,5 +26,5 @@ router.delete('/:id',
     jwtAuth,
     authorize('owner'),
     productController.delete)
-    
+
 module.exports = router

@@ -14,7 +14,8 @@ const ProductSchema = {
         description: joi.string().required(),
         categoryId: joi.number().required(),
         amount: joi.number().required().min(0),
-    })
+    }), 
+
 }
 
 module.exports = ProductSchema
