@@ -9,13 +9,23 @@ const ErrorMiddleware = require('./middlewares/error.middleware')
 const jwtAuth = require('./middlewares/jwtAuth')
 const app = express()
 
+// roles 
+const RoleModel = require('./models/Role.model')
+const roles = require('./constant/Roles')
+
+
+
 // routes
+const roleRoute = require('./routes/role.route')
 const userRoute = require('./routes/user.route')
 const authRoute = require('./routes/auth.route')
 const addressRoute = require('./routes/address.route')
 const categoryRoute = require('./routes/category.route')
 const productRoute = require('./routes/product.route')
+
 // middleware 
+// authorize middleware
+const authorize = require('./middlewares/authorize.middleware')
 // parse requests of content-type - application/json
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
@@ -28,12 +38,13 @@ const sequelize = require('./database/mysql/connect')
 require('./models/relationships') // relationships
 async function connectMysql() {
     try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-
+        await sequelize.authenticate()
+        console.log('Connection has been established successfully.')
         await sequelize.sync()
         console.log('All models were synchronized successfully.');
         
+        await RoleModel.bulkCreate(roles, {ignoreDuplicates: true})
+        console.log('all roles were inserted successfully.');
     } catch (error) {
         console.error('Unable to connect to the database:', error);
     }
@@ -41,6 +52,7 @@ async function connectMysql() {
 connectMysql()
 
 // routes
+app.use('/api/v1/role', jwtAuth, authorize('super_admin'), roleRoute)
 app.use('/api/v1/user', jwtAuth, userRoute)
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/address', jwtAuth, addressRoute)

@@ -1,12 +1,16 @@
 const asyncMiddleware = require('../middlewares/async.middleware');
 const Address = require('../models/Address.model');
-const User = require('../models/User.model');
 const { ErrorResponse } = require('../responses/error.Response')
 
 const addressController = {
 
     getAll: async (req, res) => {
-
+        const { id: userId } = req.user
+        const address = await Address.findAll({ where: { userId } })
+        res.status(200).json({
+            success: true,
+            address
+        })
     },
 
     create: asyncMiddleware(async (req, res) => {

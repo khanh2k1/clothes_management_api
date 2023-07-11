@@ -8,20 +8,20 @@ const categoryController = {
 
     create: asyncMiddleware(async (req, res) => {
         const { name, slug } = req.body
-        console.log(name, slug)
-        const newCategory = await Category.create(
-            { name, slug }
-        ).then(() => {
-                console.log('new category:', newCategory)
-                // await t.commit();
+        await Category.create({ name, slug })
+            .then((data) => {
+                console.log('new category:', data)
                 res.status(201).json({
                     success: true,
                 })
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 const { errors } = err
-                const { message, path} = errors[0]
-
-                throw new ErrorResponse(400, {message, path})
+                const { message } = errors[0]
+                if (!errors[0]) {
+                    throw new ErrorResponse(400, 'Cant create category')
+                }
+                throw new ErrorResponse(400, message)
             })
     }),
 
@@ -29,7 +29,7 @@ const categoryController = {
         const categories = await Category.findAll()
         res.status(200).json({
             success: true,
-            data: categories
+            categories
         })
     }),
 

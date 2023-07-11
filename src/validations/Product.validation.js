@@ -7,6 +7,13 @@ const ProductSchema = {
         description: joi.string().required(),
         categoryId: joi.number().required(),
         amount: joi.number().required(),
+    }), 
+
+    update: joi.object().keys({
+        price: joi.number().required(),
+        description: joi.string().required(),
+        categoryId: joi.number().required(),
+        amount: joi.number().required().min(0),
     })
 }
 

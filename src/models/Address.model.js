@@ -28,15 +28,6 @@ const Address = sequelize.define('Address', {
         allowNull: true,
         defaultValue: null
     },
-    userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        unique: true,
-        references: {
-            model: 'User',
-            key: 'id'
-        }
-    }
 }, {
     freezeTableName: true
 })

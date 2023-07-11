@@ -33,14 +33,6 @@ const Product = sequelize.define('Product', {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
-    categoryId: { 
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'Category',
-            key: 'id'
-        }
-    }
 }, {
     freezeTableName: true
 })

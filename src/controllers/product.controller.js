@@ -50,8 +50,11 @@ const productController = {
             })
             .catch((err) => {
                 const { errors } = err
-                const { message, path } = errors[0]
-                throw new ErrorResponse(400, { message, path })
+                const { message } = errors[0]
+                if (!errors[0]) {
+                    throw new ErrorResponse(400, 'Cant create category')
+                }
+                throw new ErrorResponse(400, message)
             })
     }),
 

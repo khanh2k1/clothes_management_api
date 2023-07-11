@@ -7,27 +7,36 @@ const authenticationController = {
 
     signUp: asyncMiddleware(async (req, res) => {
         const { username, password, email, phone } = req.body
+        console.log('req.body of signUp ')
         // check username and email exist
-        const isExistedUser = await User.findOne({
-            where:
-            {
-                [Sequelize.Op.or]: [{ username }, { email }]
-            }
-        })
+        try {
+            const isExistedUser = await User.findOne({
+                where:
+                {
+                    [Sequelize.Op.or]: [{ username }, { email }]
+                }
+            })
 
-        if (isExistedUser) {
-            console.log('isExistedUser: ', isExistedUser['dataValues'])
-            throw new ErrorResponse(400, 'User already exist')
+            if (isExistedUser) {
+                console.log('isExistedUser: ', isExistedUser['dataValues'])
+                throw new ErrorResponse(401, 'Unauthorized')
+            }
+
+            // create a new user
+            const hashPassword = authUtils.hashPassword(password)
+            const user = await User.create({ username, password: hashPassword, email, phone, role: 'customer' })
+
+            console.log('new user:', user)
+            res.status(201).json({
+                success: true,
+            })
+
+        } catch (error) {
+            console.log('==> error: ', error)
+            throw new ErrorResponse(401, 'Unauthorized')
         }
 
-        // create a new user
-        const hashPassword = authUtils.hashPassword(password)
-        const user = await User.create({ username, password: hashPassword, email, phone })
 
-        console.log('new user:', user)
-        res.status(201).json({
-            success: true,    
-        })
     }),
 
     signIn: asyncMiddleware(async (req, res) => {
