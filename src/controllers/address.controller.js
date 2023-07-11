@@ -15,8 +15,8 @@ const addressController = {
         const { city, province, address, zip } = req.body
         // check duplicate address of user
         //
-        await Address.create
-            ({ city, province, address, zip, userId }).then((data) => {
+        await Address.create({ city, province, address, zip, userId })
+        .then((data) => {
                 res.status(201).json({
                     success: true,
                 })

@@ -9,4 +9,4 @@ const userSchema = {
     })
 }
 
-module.exports = userSchema
+module.exports = userSchema 

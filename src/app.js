@@ -13,7 +13,8 @@ const app = express()
 const userRoute = require('./routes/user.route')
 const authRoute = require('./routes/auth.route')
 const addressRoute = require('./routes/address.route')
-
+const categoryRoute = require('./routes/category.route')
+const productRoute = require('./routes/product.route')
 // middleware 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -43,8 +44,8 @@ connectMysql()
 app.use('/api/v1/user', jwtAuth, userRoute)
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/address', jwtAuth, addressRoute)
-
-
+app.use('/api/v1/category', jwtAuth, categoryRoute)
+app.use('/api/v1/product', jwtAuth, productRoute)
 // Error middleware
 app.use(ErrorMiddleware)
 

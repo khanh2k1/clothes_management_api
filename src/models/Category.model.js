@@ -6,6 +6,7 @@ const Category = sequelize.define('Category', {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
     },
     name: {
@@ -19,6 +20,7 @@ const Category = sequelize.define('Category', {
         unique: true
     }
 }, {
+    paranoid: true,
     freezeTableName: true
 })
 

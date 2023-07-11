@@ -26,7 +26,7 @@ const authenticationController = {
 
         console.log('new user:', user)
         res.status(201).json({
-            success: true,
+            success: true,    
         })
     }),
 

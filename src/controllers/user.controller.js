@@ -12,7 +12,6 @@ const userController = {
             },
             include: {
                 model: Address,
-            
                 attributes: ['city', 'province', 'address', 'zip']
             },
             attributes: { exclude: ['createdAt', 'updatedAt'] }
