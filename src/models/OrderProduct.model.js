@@ -26,6 +26,7 @@ const OrderProduct = sequelize.define('OrderProduct', {
     }
 }, {
     tableName: 'order_product',
+    timestamps: true,
 })
 
 module.exports = OrderProduct;

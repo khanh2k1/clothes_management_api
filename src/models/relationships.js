@@ -19,7 +19,8 @@ User.belongsTo(Role, { foreignKey: 'role' })
 Status.hasOne(Order, {
     foreignKey: {
         name: 'status',
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'pending'
     },
     sourceKey: 'slug'
 })

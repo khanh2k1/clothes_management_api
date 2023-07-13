@@ -25,6 +25,7 @@ const authRoute = require('./routes/auth.route')
 const addressRoute = require('./routes/address.route')
 const categoryRoute = require('./routes/category.route')
 const productRoute = require('./routes/product.route')
+const orderRoute = require('./routes/order.route')
 
 // middleware 
 // authorize middleware
@@ -45,7 +46,7 @@ async function connectMysql() {
         console.log('Connection has been established successfully.')
         // await sequelize.sync({ alter: true })
         // await sequelize.sync({ force: false })
-        await sequelize.sync({force: true})
+        await sequelize.sync()
         console.log('All models were synchronized successfully.');
 
         await RoleModel.bulkCreate(roles, { ignoreDuplicates: true })
@@ -63,8 +64,11 @@ app.use('/api/v1/role', jwtAuth, authorize('super_admin'), roleRoute)
 app.use('/api/v1/user', jwtAuth, userRoute)
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/address', jwtAuth, addressRoute)
-app.use('/api/v1/category', jwtAuth, categoryRoute)
-app.use('/api/v1/product', jwtAuth, productRoute)
+app.use('/api/v1/category', categoryRoute)
+app.use('/api/v1/product', productRoute)
+app.use('/api/v1/order', jwtAuth, authorize('owner', 'customer'), orderRoute)
+
+
 // Error middleware
 app.use(ErrorMiddleware)
 

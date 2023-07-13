@@ -8,10 +8,9 @@ const Order = sequelize.define('Order', {
         allowNull: false,
         primaryKey: true,
     },
-    quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1
+    note: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     cancelledReason: {
         type: DataTypes.STRING,
