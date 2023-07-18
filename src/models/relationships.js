@@ -55,5 +55,18 @@ Category.hasMany(Product, {
 Product.belongsTo(Category, { foreignKey: 'categoryId' })
 
 // many to many
-Order.belongsToMany(Product, { through: OrderProduct, foreignKey: 'orderId', allowNull: false });
-Product.belongsToMany(Order, { through: OrderProduct, foreignKey: 'productId', allowNull: false });
+Order.belongsToMany(Product, {
+    through: { model: OrderProduct },
+    foreignKey: {
+        name: 'orderId',
+        allowNull: false,
+    }
+});
+Product.belongsToMany(Order, {
+    through: { model: OrderProduct },
+    foreignKey:
+    {
+        name: 'productId',
+        allowNull: false,
+    }
+});

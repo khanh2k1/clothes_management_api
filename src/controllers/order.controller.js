@@ -9,25 +9,38 @@ const orderController = {
 
     create: asyncMiddleware(async (req, res) => {
         const t = await sequelize.transaction()
-        try {
 
+        try {
             const { id: orderedUserId } = req.user
             const { note, products } = req.body
             const newOrder = await Order.create({ orderedUserId, note }, { transaction: t })
-            // lay ids tu products
-            const prods = products.map((product) => {
 
-                console.log('==> product = ', product)
-                return {
-                    orderId: newOrder.id,
-                    productId: product.productId,
-                    quantity: product.quantity
+            console.log('==> created new order ')
 
-                }
+            // cach 1
+            const productIds = products.map((product) => product.productId)
+            const productQuantites = products.map((product) =>  product.quantity)
+            console.log('==> productIds: ', productIds, ' productQuantites: ', productQuantites)
+            
+            productIds.forEach(async (productId, index) => {
+                await newOrder.addProduct(productId, {
+                    through: {quantity: productQuantites[index]}
+                })
             })
-            console.log('prods = ', prods)
-            // insert vao bang order_product
-            await OrderProduct.bulkCreate(prods, { transaction: t })
+
+            // // cach 2  
+            // // insert vao bang order_product
+            // // lay ids tu products
+            // const prods = products.map((product) => {
+
+            //     return {
+            //         orderId: newOrder.id,
+            //         productId: product.productId,
+            //         quantity: product.quantity
+
+            //     }
+            // })
+            // await OrderProduct.bulkCreate(prods, { transaction: t })
 
             await t.commit()
 
@@ -37,25 +50,18 @@ const orderController = {
 
         } catch (error) {
             await t.rollback()
-            errorUtils(error)
+            console.log(error)
+            errorUtils('ERROR')
 
         }
     }),
 
-    updateStatusOrder: asyncMiddleware(async (req, res) => {
-
-    }),
-
     getAll: asyncMiddleware(async (req, res) => {
-        const { id: orderedUserId } = req.user
-
+        const { id: userId } = req.user
         let orders = []
-
         if (req.user.role === 'customer') {
             orders = await Order.findAll({
-                where: {
-                    orderedUserId
-                },
+                where: { userId },
                 include: [{
                     model: Product,
                     through: {
@@ -110,10 +116,110 @@ const orderController = {
 
     }),
 
+    updateStatusOrder: asyncMiddleware(async (req, res) => {
+        const { id } = req.params
+
+        const { status } = req.body
+
+        console.log('==> status: ', status)
+
+        const order = await Order.findByPk(id)
+        if (!order) {
+            throw new ErrorResponse(404, 'Order not found')
+        }
+        await order.update({ status }, { where: { id } })
+
+        console.log('==> order: ', order.dataValues)
+
+        res.status(200).json({
+            success: true,
+            status
+        })
+    }),
+
     cancelOrder: asyncMiddleware(async (req, res) => {
+        const { id } = req.params
+        const role = req.user.role
+        const { id: userId } = req.user
+        const { cancelledReason } = req.body
+        // get order
+        const order = await Order.findByPk(id)
 
+        if (!order) {
+            console.log('==> order not found')
+            throw new ErrorResponse(404, 'Order not found')
+        }
+
+        console.log('==> order:', order.dataValues.status)
+
+        // check status 
+        if (!['pending', 'approved'].includes(order.dataValues.status)) {
+            throw new ErrorResponse(403, 'Forbidden')
+        }
+        
+        if (role === 'customer' && order.status !== 'pending') {
+            throw new ErrorResponse(403, 'U cant cancel this order')
+        }
+
+        if (role === 'customer' && order.orderedUserId !== userId) {
+            throw new ErrorResponse(403, 'U are not acancel this order')
+        }
+
+        await order.update({
+            status: 'cancelled',
+            cancelled_at: Date.now(),
+            cancelledUserId: userId,
+            cancelledReason
+        })
+
+        res.json({
+            success: true,
+            message: 'cancelled delivery'
+        })
+    }),
+
+    successfulDelivery: asyncMiddleware(async (req, res) => {
+        const { id } = req.params
+
+        // update status order
+        const order = await Order.update({ status: 'Done', received_at: Date.now() }, {
+            where: {
+                id
+            }
+        })
+        if (!order) {
+            throw new ErrorResponse(500, 'Order not found')
+        }
+        res.json({
+            success: true,
+            message: 'Successful delivery'
+        })
+    }),
+
+    deleteOrder: asyncMiddleware(async (req, res) => {
+        const { id } = req.params
+        const order = await Order.findByPk(id)
+        if (!order) {
+            throw new ErrorResponse(404, 'Order not found')
+        }
+        if (!['pending', 'approved', 'done'].includes(order.dataValues.status)) throw new ErrorResponse(403, 'Forbidden')
+
+        // // cach 1
+        // await order.destroy({ where: { id }, cascade: true })
+
+        // // cach 2
+        // await OrderProduct.destroy({ where: { orderId: id } })
+        // await order.destroy({ where: { id } })
+
+        // cach 3
+        // Xóa liên kết giữa Order và Product thông qua ProductOrder
+        await order.setProducts([]); // Ghi đè các sản phẩm liên kết trong mảng rỗng
+
+        res.json({
+            success: true,
+            message: 'Delete order successfully'
+        })
     })
-
 }
 
 module.exports = orderController

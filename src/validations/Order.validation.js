@@ -12,8 +12,12 @@ const orderSchema = {
         }))
     }),
 
-    updateStatusOrder: joi.object().keys({
+    updateStatus: joi.object().keys({
         status: joi.string().valid(...statusSlug).required()
+    }),
+
+    cancelOrder: joi.object().keys({
+        cancelledReason: joi.string().required(),
     })
 }
 
