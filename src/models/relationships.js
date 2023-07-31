@@ -2,7 +2,7 @@ const User = require('./User.model');
 const Address = require('./Address.model');
 const Category = require('./Category.model');
 const Product = require('./Product.model');
-const Campaign = require('./Campaign.model');
+const Coupon = require('./Coupon.model');
 const Order = require('./Order.model');
 const OrderProduct = require('./OrderProduct.model');
 const Role = require('./Role.model');
@@ -43,8 +43,8 @@ User.hasMany(Order, {
 })
 Order.belongsTo(User, { foreignKey: 'orderedUserId' })
 
-Product.hasMany(Campaign, { foreignKey: 'productId', allowNull: false })
-Campaign.belongsTo(Product, { foreignKey: 'productId', allowNull: false })
+Product.hasMany(Coupon, { foreignKey: 'productId', allowNull: false })
+Coupon.belongsTo(Product, { foreignKey: 'productId', allowNull: false })
 
 Category.hasMany(Product, {
     foreignKey: {
@@ -54,6 +54,11 @@ Category.hasMany(Product, {
 })
 Product.belongsTo(Category, { foreignKey: 'categoryId' })
 
+
+Coupon.hasMany(Order, {foreignKey: 'couponId', allowNull: false, sourceKey: 'id'})
+Order.belongsTo(Coupon, {foreignKey: 'couponId', allowNull: false})
+
+
 // many to many
 Order.belongsToMany(Product, {
     through: { model: OrderProduct },
@@ -62,6 +67,7 @@ Order.belongsToMany(Product, {
         allowNull: false,
     }
 });
+
 Product.belongsToMany(Order, {
     through: { model: OrderProduct },
     foreignKey:

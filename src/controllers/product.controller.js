@@ -7,24 +7,34 @@ const productController = {
         const { name, price, description, categoryId, amount } = req.body
         
         console.log('==>', req.file)
-        
+
+        const filename = req?.file?.filename
+        const size = req?.file?.size
+
+        const FILE_LIMIT = 5 * 1024 * 1024//mb
+
+        // neu size co thi check size
+        if(size && size > FILE_LIMIT ) {
+            throw new ErrorResponse(400, 'File too large')
+        }
+
         // const filename = req?.file?.filename
         // const file = req?.file
         // console.log('==> file that you uploaded:', file)
 
-        // await Product.create(
-        //     { name, price, description, categoryId, amount, photo: filename },
-        // ).then((result) => {
-        //     console.log('new product:', result)
-        //     res.status(201).json({
-        //         success: true,
-        //     })
-        // }).catch((err) => {
-        //     const { errors } = err
-        //     if (!errors) throw new ErrorResponse(400, 'Product not created')
-        //     const { message } = errors[0]
-        //     throw new ErrorResponse(400, message)
-        // })
+        await Product.create(
+            { name, price, description, categoryId, amount, photo: filename },
+        ).then((result) => {
+            console.log('new product:', result)
+            res.status(201).json({
+                success: true,
+            })
+        }).catch((err) => {
+            const { errors } = err
+            if (!errors) throw new ErrorResponse(400, 'Product not created')
+            const { message } = errors[0]
+            throw new ErrorResponse(400, message)
+        })
     }),
 
     getProductById: asyncMiddleware(async (req, res) => {

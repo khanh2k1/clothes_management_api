@@ -1,8 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/mysql/connect');
 
-
-const Campaign = sequelize.define('Campaign', {
+const Coupon = sequelize.define('Coupon', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -13,12 +12,17 @@ const Campaign = sequelize.define('Campaign', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    discount: {
-        type: DataTypes.INTEGER,
+    code: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
     type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('percent', 'money'),
+        allowNull: false,
+        defaultValue: 'percent',
+    },
+    discount: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     start_date: {
@@ -30,7 +34,12 @@ const Campaign = sequelize.define('Campaign', {
         allowNull: false,
     }
 }, {
+    timestamps: false,
     freezeTableName: true
 })
 
-module.exports = Campaign;
+
+// Coupon.sync({ force: true }).then(() => {
+//     console.log('Coupon table created');
+// })
+module.exports = Coupon;

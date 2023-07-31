@@ -43,7 +43,8 @@ const fileFilter = (req, file, cb) => {
     }
 
     const { size } = file
-    console.log('size of photo: ', size)
+    
+    if(size) console.log('size of photo: ', size)
     cb(null, true)
 
 }
