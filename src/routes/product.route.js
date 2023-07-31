@@ -5,7 +5,8 @@ const productController = require('../controllers/product.controller')
 const validator = require('../middlewares/validator.middleware')
 const ProductSchema = require('../validations/Product.validation')
 const authorize = require('../middlewares/authorize.middleware')
-
+const upload = require('../middlewares/upload.middleware')
+const uploadMongo = require('../middlewares/mongoUpload.middleware')
 router.get('/:id', productController.getProductById)
 
 router.get('/', productController.getAll)
@@ -13,8 +14,10 @@ router.get('/', productController.getAll)
 router.post('/',
     jwtAuth,
     authorize('owner'),
+    uploadMongo.single('photo'),    
     validator(ProductSchema.create, 'body'),
-    productController.create)
+    productController.create
+)
 
 router.patch('/:id',
     jwtAuth,

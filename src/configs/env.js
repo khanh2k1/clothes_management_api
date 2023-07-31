@@ -14,6 +14,13 @@ const env_jwt = {
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '30d',
 }
 
+const env_nodemailer = {
+    client_id: process.env.client_id,
+    project_id: process.env.project_id,
+    refresh_token: process.env.refresh_token,
+    client_secret: process.env.client_secret,
+}
+
 const port = process.env.PORT || 3001
 
-module.exports = { env_mysql, env_jwt, port }
+module.exports = { env_mysql, env_jwt, port, env_nodemailer }

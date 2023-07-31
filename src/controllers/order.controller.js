@@ -144,27 +144,21 @@ const orderController = {
         const { cancelledReason } = req.body
         // get order
         const order = await Order.findByPk(id)
-
         if (!order) {
             console.log('==> order not found')
             throw new ErrorResponse(404, 'Order not found')
         }
-
         console.log('==> order:', order.dataValues.status)
-
         // check status 
         if (!['pending', 'approved'].includes(order.dataValues.status)) {
             throw new ErrorResponse(403, 'Forbidden')
         }
-        
         if (role === 'customer' && order.status !== 'pending') {
             throw new ErrorResponse(403, 'U cant cancel this order')
         }
-
         if (role === 'customer' && order.orderedUserId !== userId) {
-            throw new ErrorResponse(403, 'U are not acancel this order')
+            throw new ErrorResponse(403, 'U are not allow to cancel this order')
         }
-
         await order.update({
             status: 'cancelled',
             cancelled_at: Date.now(),

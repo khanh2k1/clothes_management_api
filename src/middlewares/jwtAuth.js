@@ -5,6 +5,7 @@ const {env_jwt} = require('../configs/env');
 const { ErrorResponse } = require('../responses/error.Response')
 const asyncMiddleware = require('../middlewares/async.middleware')
 
+
 const jwtAuth = asyncMiddleware(async (req, res, next) => { 
     const headerToken = req.headers['authorization'];
     if(!headerToken || !headerToken.startsWith('Bearer ')) {
@@ -21,7 +22,7 @@ const jwtAuth = asyncMiddleware(async (req, res, next) => {
 
     req.user = user
 
-    console.log('=> decoded:', user);
+    
     next()
 })
 

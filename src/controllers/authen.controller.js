@@ -45,14 +45,13 @@ const authenticationController = {
         if (!user) {
             throw new ErrorResponse(401, 'Unauthorized')
         }
-        console.log('==> user: ', user.dataValues)
+        
         const isMatch = authUtils.comparePassword(password, user.password)
         if (!isMatch) {
             throw new ErrorResponse(401, 'Unauthorized')
         }
-
         const { id } = user
-        console.log('==> id: ', id, username)
+        console.log('==> id:', id, username)
         const token = authUtils.generateToken(id, username)
 
         res.status(200).json({

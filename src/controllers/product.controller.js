@@ -5,20 +5,26 @@ const { ErrorResponse } = require('../responses/error.Response')
 const productController = {
     create: asyncMiddleware(async (req, res) => {
         const { name, price, description, categoryId, amount } = req.body
+        
+        console.log('==>', req.file)
+        
+        // const filename = req?.file?.filename
+        // const file = req?.file
+        // console.log('==> file that you uploaded:', file)
 
-        await Product.create(
-            { name, price, description, categoryId, amount },
-        ).then((result) => {
-            console.log('new product:', result)
-            res.status(201).json({
-                success: true,
-            })
-        }).catch((err) => {
-            const { errors } = err
-            if (!errors) throw new ErrorResponse(400, 'Product not created')
-            const { message } = errors[0]
-            throw new ErrorResponse(400, message)
-        })
+        // await Product.create(
+        //     { name, price, description, categoryId, amount, photo: filename },
+        // ).then((result) => {
+        //     console.log('new product:', result)
+        //     res.status(201).json({
+        //         success: true,
+        //     })
+        // }).catch((err) => {
+        //     const { errors } = err
+        //     if (!errors) throw new ErrorResponse(400, 'Product not created')
+        //     const { message } = errors[0]
+        //     throw new ErrorResponse(400, message)
+        // })
     }),
 
     getProductById: asyncMiddleware(async (req, res) => {
