@@ -27,6 +27,12 @@ const authUtils = {
     comparePassword: (password, hashPassword) => {
         const isMatch = bcrypt.compareSync(password, hashPassword);
         return isMatch
+    },
+
+    generateOtp: () => {
+
+        const otp = Math.floor(Math.random() * 1000000);
+        return otp
     }
 }
 

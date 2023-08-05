@@ -16,6 +16,11 @@ const authSchema = {
     signIn: joi.object().keys({
         username: username,
         password: password
+    }),
+
+    isVerify: joi.object().keys({
+        email: joi.string().email().required(),
+        otp: joi.string().length(6).required()
     })
 }
 

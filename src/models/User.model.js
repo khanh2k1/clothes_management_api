@@ -31,13 +31,26 @@ const User = sequelize.define('User', {
   password: {
     type: DataTypes.STRING,
     allowNull: false
-  }, 
-  
+  },
+  isVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  otp: {
+    type: DataTypes.STRING,
+  }
 },
   {
     timestamps: true,
     freezeTableName: true,
     paranoid: true,
   });
+
+
+// User.sync({ alter: true }).then(()=> {
+//   console.log('User table created');
+// }).catch((err) => {
+//   console.log(err);
+// })
 
 module.exports = User;

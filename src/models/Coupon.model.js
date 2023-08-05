@@ -35,7 +35,8 @@ const Coupon = sequelize.define('Coupon', {
     }
 }, {
     timestamps: false,
-    freezeTableName: true
+    freezeTableName: true,
+    paranoid: true
 })
 
 
