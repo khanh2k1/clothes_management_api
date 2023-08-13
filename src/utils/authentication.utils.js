@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const {env_jwt} = require('../configs/env');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const authUtils = {
     generateToken: (id, email) => {
@@ -24,8 +25,9 @@ const authUtils = {
         return hash
     },
 
-    comparePassword: (password, hashPassword) => {
-        const isMatch = bcrypt.compareSync(password, hashPassword);
+    comparePassword: (passwordInClient, passwordInDB) => {
+        // khong can phai hash passwordInCLient vi bcrypt.compareSync da lam viec nay
+        const isMatch = bcrypt.compareSync(passwordInClient, passwordInDB);
         return isMatch
     },
 
@@ -33,6 +35,11 @@ const authUtils = {
 
         const otp = Math.floor(Math.random() * 1000000);
         return otp
+    }, 
+
+    randomBytes: () => {
+        const randomBytes = crypto.randomBytes(32).toString('hex');
+        return randomBytes
     }
 }
 

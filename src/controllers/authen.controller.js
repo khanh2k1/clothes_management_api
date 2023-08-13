@@ -4,7 +4,9 @@ const authUtils = require('../utils/authentication.utils')
 const { ErrorResponse } = require('../responses/error.Response');
 const Sequelize = require('../database/mysql/connect');
 const MailService = require('../services/mail.service')
-const RegisterOtpModel = require('../models/mongo/RegisterOtp.model')
+const RegisterOtpModel = require('../models/mongo/RegisterOtp.model');
+const ForgotTokenModel = require('../models/mongo/ForgotToken.model');
+
 const authenticationController = {
 
   signUp: asyncMiddleware(async (req, res) => {
@@ -15,13 +17,7 @@ const authenticationController = {
     console.log('req.body of signUp ')
     // check username and email exist
     try {
-      const isExistedUser = await User.findOne({
-        where:
-        {
-          username
-        },
-        transaction: t
-      })
+      const isExistedUser = await User.findOne({ where: { username }, transaction: t })
 
       if (isExistedUser) {
         console.log('isExistedUser: ', isExistedUser['dataValues'])
@@ -63,7 +59,7 @@ const authenticationController = {
   verifyUser: asyncMiddleware(async (req, res) => {
     let { email, otp } = req.body
     const isVerified = await RegisterOtpModel.findOne({ email, otp })
-      
+
     if (!isVerified) {
       throw new ErrorResponse(401, 'Unauthorized')
     }
@@ -114,6 +110,91 @@ const authenticationController = {
       success: true,
       token
     })
+  }),
+
+  changePassword: asyncMiddleware(async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+    const { id: userId } = req.user
+
+    const isExistedUser = await User.findByPk(userId)
+
+    if (!isExistedUser) {
+      console.log('==> user not existed')
+      throw new ErrorResponse(401, 'Unauthorized')
+    }
+
+    // check old password
+    const isMatch = authUtils.comparePassword(oldPassword, isExistedUser.password)
+
+    if (!isMatch) {
+      console.log('==> old password not match')
+      throw new ErrorResponse(401, 'Unauthorized')
+    }
+
+    // update new password
+    const hashedNewPassword = authUtils.hashPassword(newPassword)
+    await isExistedUser.update({ password: hashedNewPassword })
+
+    res.status(200).json({
+      success: true,
+    })
+  }),
+
+  forgotPassword: asyncMiddleware(async (req, res) => {
+    const { email } = req.body
+    const isExistedUser = await User.findOne({ where: { email } })
+
+    if (!isExistedUser) {
+      console.log('==> user not existed')
+      throw new ErrorResponse(401, 'Unauthorized')
+    }
+
+    // generate token forgot password
+    const tokenForgetPassword = authUtils.randomBytes()
+
+    await MailService.sendMail({
+      to: 'tanle6378@gmail.com',
+      subject: 'Forgot password',
+      html: `<a href='http://abc.com/forget-password/${tokenForgetPassword}'>Click here to reset password</a>`
+    })
+
+    // save to mongoDB 
+    const forgotTokenModel = new ForgotTokenModel({ email, token: tokenForgetPassword })
+    await forgotTokenModel.save()
+
+
+    res.status(200).json({
+      success: true,
+      message: "please check email to reset password"
+    })
+  }),
+
+  resetPassword: asyncMiddleware(async (req, res) => {
+    const { email, token, newPassword } = req.body
+
+    // check email and token in mongoDB has expire time
+    const isExistedToken = await ForgotTokenModel.findOne({ email, token })
+
+    if (!isExistedToken) {
+      throw new ErrorResponse(400, 'invalid token')
+    }
+
+    // neu dung thi cho update password
+    const hashedNewPassword = authUtils.hashPassword(newPassword)
+    
+    await Promise.all([
+      await User.update({ password: hashedNewPassword }, { where: { email } }),
+      ForgotTokenModel.deleteOne({ email, token })
+    ]).then(() => {
+      res.status(200).json({
+        success: true,
+      })
+    }).catch((err) => {
+      console.log('==> reset password failed:', err)
+      throw new ErrorResponse(500, 'Internal Server Error')
+    })
+    
+    
   })
 }
 
