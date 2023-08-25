@@ -9,7 +9,8 @@ const sequelize = new Sequelize(
         host: env_mysql.DB_HOST,
         port: env_mysql.DB_PORT,
         dialect: env_mysql.DB_DIALECT,
-    }
+    } 
 )
     
+
 module.exports = sequelize

@@ -1,8 +1,9 @@
-const { MongoClient } = require('mongodb');
-const { default: mongoose } = require('mongoose');
 
-const url = 'mongodb://127.0.0.1:27017'; // Thay đổi URL nếu cần thiết
-const dbName = 'nodejs-course'; // Thay đổi tên database nếu cần thiết
+const { default: mongoose } = require('mongoose');
+const { env_mongoDB } = require('../../configs/env');
+
+const url = `mongodb://${env_mongoDB.DB_HOST}:${env_mongoDB.DB_PORT}`; // Thay đổi URL nếu cần thiết
+const dbName = `${env_mongoDB.DB_NAME}`; // Thay đổi tên database nếu cần thiết
 
 // Function để kết nối đến MongoDB
 

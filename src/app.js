@@ -65,15 +65,16 @@ async function connectMysql() {
     }
 }
 connectMysql()
-
 // connect mongo
 const mongodb = require('./database/mongo/connect')
-
 mongodb.connect()
 
 
+// rate-limit
+const limiter = require('./middlewares/limiter')
+const limiterMongo = require('./middlewares/limiterMongo')
+const blockUser = require('./middlewares/blacklList.middleware')
 const path = require('path')
-
 const filePath = path.join(__dirname, 'uploads')
 // routes   
 app.use('/static', express.static(filePath))

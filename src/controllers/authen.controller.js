@@ -193,8 +193,6 @@ const authenticationController = {
       console.log('==> reset password failed:', err)
       throw new ErrorResponse(500, 'Internal Server Error')
     })
-    
-    
   })
 }
 
